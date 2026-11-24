@@ -1,0 +1,10 @@
+{
+  "name": "@workspace/api-server",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "mvn spring-boot:run",
+    "build": "mvn -DskipTests package",
+    "start": "java -jar target/trust-compliance-api.jar"
+  }
+}

@@ -1,0 +1,28 @@
+kind = "web"
+previewPath = "/"
+title = "Trust Compliance"
+description = "A trust compliance reporting app for managing trusts and portfolios, building nested compliance rules, editing dated holdings, and reviewing rule results."
+version = "1.0.0"
+id = "artifacts/trust-compliance"
+router = "path"
+
+[[services]]
+name = "web"
+paths = [ "/" ]
+localPort = 25115
+
+[services.development]
+run = "pnpm --filter @workspace/trust-compliance run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/trust-compliance", "run", "build" ]
+serve = "static"
+publicDir = "artifacts/trust-compliance/dist/public"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "25115"
+BASE_PATH = "/"

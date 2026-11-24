@@ -1,0 +1,551 @@
+openapi: 3.1.0
+info:
+  # Do not change the title, if the title changes, the import paths will be broken
+  title: Api
+  version: 0.1.0
+  description: Trust compliance reporting API
+servers:
+  - url: /api
+    description: Base API path
+tags:
+  - name: health
+  - name: dashboard
+  - name: portfolios
+  - name: trusts
+  - name: rules
+  - name: holdings
+  - name: reports
+paths:
+  /healthz:
+    get:
+      operationId: healthCheck
+      tags: [health]
+      summary: Health check
+      responses:
+        "200":
+          description: Healthy
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HealthStatus"
+  /summary:
+    get:
+      operationId: getSummary
+      tags: [dashboard]
+      summary: Get dashboard summary
+      responses:
+        "200":
+          description: Dashboard totals and recent compliance activity
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DashboardSummary"
+  /portfolios:
+    get:
+      operationId: getPortfolios
+      tags: [portfolios]
+      summary: List portfolios
+      responses:
+        "200":
+          description: Portfolios and current trust assignments
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Portfolio"
+    post:
+      operationId: createPortfolio
+      tags: [portfolios]
+      summary: Create a portfolio
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PortfolioInput"
+      responses:
+        "201":
+          description: Created portfolio
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Portfolio"
+  /portfolios/{portfolioId}:
+    patch:
+      operationId: updatePortfolio
+      tags: [portfolios]
+      summary: Update a portfolio
+      parameters:
+        - $ref: "#/components/parameters/PortfolioId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PortfolioUpdate"
+      responses:
+        "200":
+          description: Updated portfolio
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Portfolio"
+    delete:
+      operationId: deletePortfolio
+      tags: [portfolios]
+      summary: Delete an unassigned portfolio
+      parameters:
+        - $ref: "#/components/parameters/PortfolioId"
+      responses:
+        "204":
+          description: Deleted
+  /trusts:
+    get:
+      operationId: getTrusts
+      tags: [trusts]
+      summary: List trusts
+      responses:
+        "200":
+          description: Trusts and linked portfolios
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Trust"
+    post:
+      operationId: createTrust
+      tags: [trusts]
+      summary: Create a trust
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TrustInput"
+      responses:
+        "201":
+          description: Created trust
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Trust"
+  /trusts/{trustId}:
+    patch:
+      operationId: updateTrust
+      tags: [trusts]
+      summary: Update a trust
+      parameters:
+        - $ref: "#/components/parameters/TrustId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TrustUpdate"
+      responses:
+        "200":
+          description: Updated trust
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Trust"
+    delete:
+      operationId: deleteTrust
+      tags: [trusts]
+      summary: Delete a trust
+      parameters:
+        - $ref: "#/components/parameters/TrustId"
+      responses:
+        "204":
+          description: Deleted
+  /rules:
+    get:
+      operationId: getRules
+      tags: [rules]
+      summary: List compliance rules
+      parameters:
+        - name: trustId
+          in: query
+          required: false
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Compliance rules, including global rules
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ComplianceRule"
+    post:
+      operationId: createRule
+      tags: [rules]
+      summary: Create a compliance rule
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RuleInput"
+      responses:
+        "201":
+          description: Created compliance rule
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ComplianceRule"
+  /rules/{ruleId}:
+    patch:
+      operationId: updateRule
+      tags: [rules]
+      summary: Update a compliance rule
+      parameters:
+        - $ref: "#/components/parameters/RuleId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RuleUpdate"
+      responses:
+        "200":
+          description: Updated compliance rule
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ComplianceRule"
+    delete:
+      operationId: deleteRule
+      tags: [rules]
+      summary: Delete a compliance rule
+      parameters:
+        - $ref: "#/components/parameters/RuleId"
+      responses:
+        "204":
+          description: Deleted
+  /holdings/as-of-dates:
+    get:
+      operationId: getHoldingDates
+      tags: [holdings]
+      summary: Get available holdings dates for a trust
+      parameters:
+        - name: trustId
+          in: query
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Available month-end holdings dates
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+                  format: date
+  /holdings:
+    get:
+      operationId: getHoldings
+      tags: [holdings]
+      summary: Load trust holdings for a date
+      parameters:
+        - name: trustId
+          in: query
+          required: true
+          schema:
+            type: integer
+        - name: asOfDate
+          in: query
+          required: true
+          schema:
+            type: string
+            format: date
+      responses:
+        "200":
+          description: Holdings for the selected trust and date
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Holding"
+  /holdings/bulk:
+    put:
+      operationId: updateHoldings
+      tags: [holdings]
+      summary: Save edited holdings
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/HoldingsUpdate"
+      responses:
+        "200":
+          description: Saved holdings
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Holding"
+  /reports:
+    get:
+      operationId: getReports
+      tags: [reports]
+      summary: List recent reports
+      parameters:
+        - name: trustId
+          in: query
+          required: false
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Most recent reports
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ComplianceReport"
+  /reports/run:
+    post:
+      operationId: runReport
+      tags: [reports]
+      summary: Run all applicable rules against trust holdings
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ReportRunInput"
+      responses:
+        "201":
+          description: Compliance report results
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ComplianceReport"
+components:
+  parameters:
+    PortfolioId:
+      name: portfolioId
+      in: path
+      required: true
+      schema:
+        type: integer
+    TrustId:
+      name: trustId
+      in: path
+      required: true
+      schema:
+        type: integer
+    RuleId:
+      name: ruleId
+      in: path
+      required: true
+      schema:
+        type: integer
+  schemas:
+    HealthStatus:
+      type: object
+      properties:
+        status:
+          type: string
+      required: [status]
+    DashboardSummary:
+      type: object
+      required: [trustCount, portfolioCount, ruleCount, latestReport]
+      properties:
+        trustCount: { type: integer }
+        portfolioCount: { type: integer }
+        ruleCount: { type: integer }
+        latestReport:
+          oneOf:
+            - $ref: "#/components/schemas/ComplianceReport"
+            - type: "null"
+    Portfolio:
+      type: object
+      required: [id, name, code, trustId, trustName]
+      properties:
+        id: { type: integer }
+        name: { type: string }
+        code: { type: string }
+        trustId: { type: [integer, "null"] }
+        trustName: { type: [string, "null"] }
+    PortfolioInput:
+      type: object
+      required: [name, code]
+      properties:
+        name: { type: string, minLength: 1 }
+        code: { type: string, minLength: 1 }
+    PortfolioUpdate:
+      type: object
+      properties:
+        name: { type: string, minLength: 1 }
+        code: { type: string, minLength: 1 }
+    Trust:
+      type: object
+      required: [id, name, code, portfolioId, portfolioName]
+      properties:
+        id: { type: integer }
+        name: { type: string }
+        code: { type: string }
+        portfolioId: { type: [integer, "null"] }
+        portfolioName: { type: [string, "null"] }
+    TrustInput:
+      type: object
+      required: [name, code, portfolioId]
+      properties:
+        name: { type: string, minLength: 1 }
+        code: { type: string, minLength: 1 }
+        portfolioId: { type: [integer, "null"] }
+    TrustUpdate:
+      type: object
+      properties:
+        name: { type: string, minLength: 1 }
+        code: { type: string, minLength: 1 }
+        portfolioId: { type: [integer, "null"] }
+    RuleCondition:
+      type: object
+      required: [nodeType, field, comparator, value]
+      properties:
+        nodeType: { type: string, const: condition }
+        field:
+          type: string
+          enum: [naic_designation_code, core_level1_code, core_level2_code, general_ledger_group, cusip, issuer, asset_class, bv_accrued, mv_accrued]
+        comparator:
+          type: string
+          enum: [EQ, NE, LIKE, NOT_LIKE, LT, LTE, GT, GTE]
+        value:
+          oneOf:
+            - type: string
+            - type: number
+    RuleGroup:
+      type: object
+      required: [nodeType, operator, children]
+      properties:
+        nodeType: { type: string, const: group }
+        operator: { type: string, enum: [AND, OR] }
+        children:
+          type: array
+          minItems: 1
+          items:
+            oneOf:
+              - $ref: "#/components/schemas/RuleCondition"
+              - $ref: "#/components/schemas/RuleGroup"
+    RuleLimit:
+      type: object
+      required: [metric, comparator, value]
+      properties:
+        metric: { type: string, enum: [total_bv, total_mv, actual_pct] }
+        comparator: { type: string, enum: [EQ, NE, LT, LTE, GT, GTE] }
+        value: { type: number }
+    ComplianceRule:
+      type: object
+      required: [id, name, trustId, trustName, enabled, aggregationCriteria, limit, createdAt]
+      properties:
+        id: { type: integer }
+        name: { type: string }
+        trustId: { type: [integer, "null"] }
+        trustName: { type: [string, "null"] }
+        enabled: { type: boolean }
+        aggregationCriteria: { $ref: "#/components/schemas/RuleGroup" }
+        limit: { $ref: "#/components/schemas/RuleLimit" }
+        createdAt: { type: string, format: date-time }
+    RuleInput:
+      type: object
+      required: [name, trustId, enabled, aggregationCriteria, limit]
+      properties:
+        name: { type: string, minLength: 1 }
+        trustId: { type: [integer, "null"] }
+        enabled: { type: boolean }
+        aggregationCriteria: { $ref: "#/components/schemas/RuleGroup" }
+        limit: { $ref: "#/components/schemas/RuleLimit" }
+    RuleUpdate:
+      type: object
+      properties:
+        name: { type: string, minLength: 1 }
+        trustId: { type: [integer, "null"] }
+        enabled: { type: boolean }
+        aggregationCriteria: { $ref: "#/components/schemas/RuleGroup" }
+        limit: { $ref: "#/components/schemas/RuleLimit" }
+    Holding:
+      type: object
+      required: [id, trustId, asOfDate, cusip, issuer, assetClass, naicDesignationCode, coreLevel1Code, coreLevel2Code, generalLedgerGroup, bvAccrued, mvAccrued]
+      properties:
+        id: { type: integer }
+        trustId: { type: integer }
+        asOfDate: { type: string, format: date }
+        cusip: { type: string }
+        issuer: { type: string }
+        assetClass: { type: string }
+        naicDesignationCode: { type: string }
+        coreLevel1Code: { type: string }
+        coreLevel2Code: { type: string }
+        generalLedgerGroup: { type: string }
+        bvAccrued: { type: number }
+        mvAccrued: { type: number }
+    HoldingUpdate:
+      type: object
+      required: [id, cusip, issuer, assetClass, naicDesignationCode, coreLevel1Code, coreLevel2Code, generalLedgerGroup, bvAccrued, mvAccrued]
+      properties:
+        id: { type: integer }
+        cusip: { type: string }
+        issuer: { type: string }
+        assetClass: { type: string }
+        naicDesignationCode: { type: string }
+        coreLevel1Code: { type: string }
+        coreLevel2Code: { type: string }
+        generalLedgerGroup: { type: string }
+        bvAccrued: { type: number }
+        mvAccrued: { type: number }
+    HoldingsUpdate:
+      type: object
+      required: [trustId, asOfDate, holdings]
+      properties:
+        trustId: { type: integer }
+        asOfDate: { type: string, format: date }
+        holdings:
+          type: array
+          items: { $ref: "#/components/schemas/HoldingUpdate" }
+    ReportRunInput:
+      type: object
+      required: [trustId, asOfDate]
+      properties:
+        trustId: { type: integer }
+        asOfDate: { type: string, format: date }
+    ReportRuleResult:
+      type: object
+      required: [ruleId, ruleName, status, measuredValue, limitMetric, limitComparator, limitValue, selectedHoldingCount, sql]
+      properties:
+        ruleId: { type: integer }
+        ruleName: { type: string }
+        status: { type: string, enum: [PASS, FAIL] }
+        measuredValue: { type: number }
+        limitMetric: { type: string, enum: [total_bv, total_mv, actual_pct] }
+        limitComparator: { type: string }
+        limitValue: { type: number }
+        selectedHoldingCount: { type: integer }
+        sql: { type: string }
+    ComplianceReport:
+      type: object
+      required: [id, trustId, trustName, asOfDate, runAt, totalHoldingCount, passCount, failCount, results]
+      properties:
+        id: { type: integer }
+        trustId: { type: integer }
+        trustName: { type: string }
+        asOfDate: { type: string, format: date }
+        runAt: { type: string, format: date-time }
+        totalHoldingCount: { type: integer }
+        passCount: { type: integer }
+        failCount: { type: integer }
+        results:
+          type: array
+          items: { $ref: "#/components/schemas/ReportRuleResult" }
+
