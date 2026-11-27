@@ -15,6 +15,7 @@ tags:
   - name: rules
   - name: holdings
   - name: reports
+  - name: report-templates
 paths:
   /healthz:
     get:
@@ -331,6 +332,107 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ComplianceReport"
+  /report-templates/fields:
+    get:
+      operationId: getReportTemplateFields
+      tags: [report-templates]
+      summary: List holdings fields available in Excel templates
+      responses:
+        "200":
+          description: Holding field metadata
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ReportTemplateField"
+  /report-templates:
+    get:
+      operationId: getReportTemplates
+      tags: [report-templates]
+      summary: List Excel report templates
+      parameters:
+        - name: trustId
+          in: query
+          required: false
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Report templates, including their ordered workbook structure
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ReportTemplate"
+    post:
+      operationId: createReportTemplate
+      tags: [report-templates]
+      summary: Create an Excel report template
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ReportTemplateInput"
+      responses:
+        "201":
+          description: Created report template
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ReportTemplate"
+  /report-templates/{templateId}:
+    put:
+      operationId: updateReportTemplate
+      tags: [report-templates]
+      summary: Replace an Excel report template
+      parameters:
+        - $ref: "#/components/parameters/ReportTemplateId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ReportTemplateUpdate"
+      responses:
+        "200":
+          description: Updated report template
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ReportTemplate"
+    delete:
+      operationId: deleteReportTemplate
+      tags: [report-templates]
+      summary: Delete an Excel report template
+      parameters:
+        - $ref: "#/components/parameters/ReportTemplateId"
+      responses:
+        "204":
+          description: Deleted
+  /report-templates/{templateId}/generate:
+    post:
+      operationId: generateReportTemplate
+      tags: [report-templates]
+      summary: Generate an Excel workbook for a month-end date
+      parameters:
+        - $ref: "#/components/parameters/ReportTemplateId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ReportTemplateGenerateInput"
+      responses:
+        "200":
+          description: Generated Excel workbook
+          content:
+            application/vnd.openxmlformats-officedocument.spreadsheetml.sheet:
+              schema:
+                type: string
+                format: binary
 components:
   parameters:
     PortfolioId:
@@ -347,6 +449,12 @@ components:
         type: integer
     RuleId:
       name: ruleId
+      in: path
+      required: true
+      schema:
+        type: integer
+    ReportTemplateId:
+      name: templateId
       in: path
       required: true
       schema:
@@ -519,6 +627,100 @@ components:
       required: [trustId, asOfDate]
       properties:
         trustId: { type: integer }
+        asOfDate: { type: string, format: date }
+    ReportTemplateField:
+      type: object
+      required: [field, label, numeric]
+      properties:
+        field:
+          type: string
+          enum: [cusip, issuer, assetClass, naicDesignationCode, coreLevel1Code, coreLevel2Code, generalLedgerGroup, bvAccrued, mvAccrued]
+        label: { type: string }
+        numeric: { type: boolean }
+    ReportTemplateStyle:
+      type: object
+      required: [bold, italic, textColor, backgroundColor]
+      properties:
+        bold: { type: boolean }
+        italic: { type: boolean }
+        textColor: { type: [string, "null"], pattern: "^#[0-9A-Fa-f]{6}$" }
+        backgroundColor: { type: [string, "null"], pattern: "^#[0-9A-Fa-f]{6}$" }
+    ReportTemplateColumn:
+      allOf:
+        - $ref: "#/components/schemas/ReportTemplateStyle"
+        - type: object
+          required: [field, order, headerLabel, secondHeaderLabel, headerBackgroundColor, aggregate]
+          properties:
+            field:
+              type: string
+              enum: [cusip, issuer, assetClass, naicDesignationCode, coreLevel1Code, coreLevel2Code, generalLedgerGroup, bvAccrued, mvAccrued]
+            order: { type: integer, minimum: 1 }
+            headerLabel: { type: string, minLength: 1 }
+            secondHeaderLabel: { type: [string, "null"] }
+            headerBackgroundColor: { type: [string, "null"], pattern: "^#[0-9A-Fa-f]{6}$" }
+            aggregate: { type: boolean }
+    ReportTemplateSection:
+      allOf:
+        - $ref: "#/components/schemas/ReportTemplateStyle"
+        - type: object
+          required: [name, order, twoHeaderRows, showHoldings, blankRowAfter, aggregationLabel, columns]
+          properties:
+            name: { type: string, minLength: 1 }
+            order: { type: integer, minimum: 1 }
+            twoHeaderRows: { type: boolean }
+            showHoldings: { type: boolean }
+            blankRowAfter: { type: boolean }
+            aggregationLabel: { type: [string, "null"] }
+            columns:
+              type: array
+              minItems: 1
+              items: { $ref: "#/components/schemas/ReportTemplateColumn" }
+    ReportTemplateSheet:
+      type: object
+      required: [name, order, sections]
+      properties:
+        name: { type: string, minLength: 1 }
+        order: { type: integer, minimum: 1 }
+        sections:
+          type: array
+          minItems: 1
+          items: { $ref: "#/components/schemas/ReportTemplateSection" }
+    ReportTemplate:
+      type: object
+      required: [id, name, trustId, trustName, createdAt, sheets]
+      properties:
+        id: { type: integer }
+        name: { type: string }
+        trustId: { type: [integer, "null"] }
+        trustName: { type: [string, "null"] }
+        createdAt: { type: string, format: date-time }
+        sheets:
+          type: array
+          items: { $ref: "#/components/schemas/ReportTemplateSheet" }
+    ReportTemplateInput:
+      type: object
+      required: [name, trustId, sheets]
+      properties:
+        name: { type: string, minLength: 1 }
+        trustId: { type: [integer, "null"] }
+        sheets:
+          type: array
+          minItems: 1
+          items: { $ref: "#/components/schemas/ReportTemplateSheet" }
+    ReportTemplateUpdate:
+      type: object
+      required: [name, trustId, sheets]
+      properties:
+        name: { type: string, minLength: 1 }
+        trustId: { type: [integer, "null"] }
+        sheets:
+          type: array
+          minItems: 1
+          items: { $ref: "#/components/schemas/ReportTemplateSheet" }
+    ReportTemplateGenerateInput:
+      type: object
+      required: [asOfDate]
+      properties:
         asOfDate: { type: string, format: date }
     ReportRuleResult:
       type: object

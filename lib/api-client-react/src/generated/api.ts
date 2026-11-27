@@ -30,6 +30,7 @@ import type {
   DashboardSummary,
   GetHoldingDatesParams,
   GetHoldingsParams,
+  GetReportTemplatesParams,
   GetReportsParams,
   GetRulesParams,
   HealthStatus,
@@ -39,6 +40,11 @@ import type {
   PortfolioInput,
   PortfolioUpdate,
   ReportRunInput,
+  ReportTemplate,
+  ReportTemplateField,
+  ReportTemplateGenerateInput,
+  ReportTemplateInput,
+  ReportTemplateUpdate,
   RuleInput,
   RuleUpdate,
   Trust,
@@ -1836,5 +1842,554 @@ export const useRunReport = <TError = ErrorType<unknown>,
         TContext
       > => {
       return useMutation(getRunReportMutationOptions(options), queryClient);
+    }
+
+export const getGetReportTemplateFieldsUrl = () => {
+
+
+
+
+  return `/api/report-templates/fields`
+}
+
+/**
+ * @summary List holdings fields available in Excel templates
+ */
+export const getReportTemplateFields = async ( options?: Parameters<typeof customFetch>[1]): Promise<ReportTemplateField[]> => {
+
+  return customFetch<ReportTemplateField[]>(getGetReportTemplateFieldsUrl(),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getGetReportTemplateFieldsQueryKey = () => {
+    return [
+    `/api/report-templates/fields`
+    ] as const;
+    }
+
+
+export const getGetReportTemplateFieldsQueryOptions = <TData = Awaited<ReturnType<typeof getReportTemplateFields>>, TError = ErrorType<unknown>>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getReportTemplateFields>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetReportTemplateFieldsQueryKey();
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getReportTemplateFields>>> = ({ signal }) => getReportTemplateFields({ signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getReportTemplateFields>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type GetReportTemplateFieldsQueryResult = NonNullable<Awaited<ReturnType<typeof getReportTemplateFields>>>
+export type GetReportTemplateFieldsQueryError = ErrorType<unknown>
+
+
+export function useGetReportTemplateFields<TData = Awaited<ReturnType<typeof getReportTemplateFields>>, TError = ErrorType<unknown>>(
+  options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getReportTemplateFields>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getReportTemplateFields>>,
+          TError,
+          Awaited<ReturnType<typeof getReportTemplateFields>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof customFetch>}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetReportTemplateFields<TData = Awaited<ReturnType<typeof getReportTemplateFields>>, TError = ErrorType<unknown>>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getReportTemplateFields>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getReportTemplateFields>>,
+          TError,
+          Awaited<ReturnType<typeof getReportTemplateFields>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof customFetch>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetReportTemplateFields<TData = Awaited<ReturnType<typeof getReportTemplateFields>>, TError = ErrorType<unknown>>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getReportTemplateFields>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+/**
+ * @summary List holdings fields available in Excel templates
+ */
+
+export function useGetReportTemplateFields<TData = Awaited<ReturnType<typeof getReportTemplateFields>>, TError = ErrorType<unknown>>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getReportTemplateFields>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+ , queryClient?: QueryClient
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getGetReportTemplateFieldsQueryOptions(options)
+
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
+
+export const getGetReportTemplatesUrl = (params?: GetReportTemplatesParams,) => {
+  const normalizedParams = new URLSearchParams();
+
+  Object.entries(params || {}).forEach(([key, value]) => {
+
+    if (value !== undefined) {
+      normalizedParams.append(key, value === null ? 'null' : String(value))
+    }
+  });
+
+  const stringifiedParams = normalizedParams.toString();
+
+  return stringifiedParams.length > 0 ? `/api/report-templates?${stringifiedParams}` : `/api/report-templates`
+}
+
+/**
+ * @summary List Excel report templates
+ */
+export const getReportTemplates = async (params?: GetReportTemplatesParams, options?: Parameters<typeof customFetch>[1]): Promise<ReportTemplate[]> => {
+
+  return customFetch<ReportTemplate[]>(getGetReportTemplatesUrl(params),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getGetReportTemplatesQueryKey = (params?: GetReportTemplatesParams,) => {
+    return [
+    `/api/report-templates`, ...(params ? [params] : [])
+    ] as const;
+    }
+
+
+export const getGetReportTemplatesQueryOptions = <TData = Awaited<ReturnType<typeof getReportTemplates>>, TError = ErrorType<unknown>>(params?: GetReportTemplatesParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getReportTemplates>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetReportTemplatesQueryKey(params);
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getReportTemplates>>> = ({ signal }) => getReportTemplates(params, { signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getReportTemplates>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type GetReportTemplatesQueryResult = NonNullable<Awaited<ReturnType<typeof getReportTemplates>>>
+export type GetReportTemplatesQueryError = ErrorType<unknown>
+
+
+export function useGetReportTemplates<TData = Awaited<ReturnType<typeof getReportTemplates>>, TError = ErrorType<unknown>>(
+ params: undefined |  GetReportTemplatesParams, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getReportTemplates>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getReportTemplates>>,
+          TError,
+          Awaited<ReturnType<typeof getReportTemplates>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof customFetch>}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetReportTemplates<TData = Awaited<ReturnType<typeof getReportTemplates>>, TError = ErrorType<unknown>>(
+ params?: GetReportTemplatesParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getReportTemplates>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getReportTemplates>>,
+          TError,
+          Awaited<ReturnType<typeof getReportTemplates>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof customFetch>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetReportTemplates<TData = Awaited<ReturnType<typeof getReportTemplates>>, TError = ErrorType<unknown>>(
+ params?: GetReportTemplatesParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getReportTemplates>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+/**
+ * @summary List Excel report templates
+ */
+
+export function useGetReportTemplates<TData = Awaited<ReturnType<typeof getReportTemplates>>, TError = ErrorType<unknown>>(
+ params?: GetReportTemplatesParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getReportTemplates>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+ , queryClient?: QueryClient
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getGetReportTemplatesQueryOptions(params,options)
+
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
+
+export const getCreateReportTemplateUrl = () => {
+
+
+
+
+  return `/api/report-templates`
+}
+
+/**
+ * @summary Create an Excel report template
+ */
+export const createReportTemplate = async (reportTemplateInput: ReportTemplateInput, options?: Parameters<typeof customFetch>[1]): Promise<ReportTemplate> => {
+
+    const getHeaders = (h?: NonNullable<RequestInit['headers']>): Record<string, string | readonly string[]> => {
+    if (!h) return {};
+    if (h instanceof Headers) return Object.fromEntries(h.entries());
+    if (Symbol.iterator in h) {
+      return Object.fromEntries(
+        Array.from(h as Iterable<Iterable<string>>, (entry) => Array.from(entry) as [string, string]),
+      );
+    }
+    const headers: Record<string, string | readonly string[]> = {};
+    for (const [name, value] of Object.entries<string | readonly string[] | undefined>(h)) {
+      if (value !== undefined) headers[name] = value;
+    }
+    return headers;
+  };
+return customFetch<ReportTemplate>(getCreateReportTemplateUrl(),
+  {
+    ...options,
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', ...getHeaders(options?.headers) },
+    body: JSON.stringify(reportTemplateInput)
+  }
+);}
+
+
+
+
+
+export const getCreateReportTemplateMutationKey = () => ['createReportTemplate'] as const;
+
+export const getCreateReportTemplateMutationOptions = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createReportTemplate>>, TError,CreateReportTemplateMutationVariables, TContext>, request?: SecondParameter<typeof customFetch>}
+): UseMutationOptions<Awaited<ReturnType<typeof createReportTemplate>>, TError,CreateReportTemplateMutationVariables, TContext> => {
+
+const mutationKey = getCreateReportTemplateMutationKey();
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof createReportTemplate>>, CreateReportTemplateMutationVariables> = (props) => {
+          const {data} = props ?? {};
+
+          return  createReportTemplate(data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type CreateReportTemplateMutationResult = NonNullable<Awaited<ReturnType<typeof createReportTemplate>>>
+    export type CreateReportTemplateMutationBody = BodyType<ReportTemplateInput>
+    export type CreateReportTemplateMutationError = ErrorType<unknown>
+    export type CreateReportTemplateMutationVariables = {data: BodyType<ReportTemplateInput>}
+
+    /**
+ * @summary Create an Excel report template
+ */
+export const useCreateReportTemplate = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createReportTemplate>>, TError,CreateReportTemplateMutationVariables, TContext>, request?: SecondParameter<typeof customFetch>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof createReportTemplate>>,
+        TError,
+        CreateReportTemplateMutationVariables,
+        TContext
+      > => {
+      return useMutation(getCreateReportTemplateMutationOptions(options), queryClient);
+    }
+
+export const getUpdateReportTemplateUrl = (templateId: number,) => {
+
+
+
+
+  return `/api/report-templates/${templateId}`
+}
+
+/**
+ * @summary Replace an Excel report template
+ */
+export const updateReportTemplate = async (templateId: number,
+    reportTemplateUpdate: ReportTemplateUpdate, options?: Parameters<typeof customFetch>[1]): Promise<ReportTemplate> => {
+
+    const getHeaders = (h?: NonNullable<RequestInit['headers']>): Record<string, string | readonly string[]> => {
+    if (!h) return {};
+    if (h instanceof Headers) return Object.fromEntries(h.entries());
+    if (Symbol.iterator in h) {
+      return Object.fromEntries(
+        Array.from(h as Iterable<Iterable<string>>, (entry) => Array.from(entry) as [string, string]),
+      );
+    }
+    const headers: Record<string, string | readonly string[]> = {};
+    for (const [name, value] of Object.entries<string | readonly string[] | undefined>(h)) {
+      if (value !== undefined) headers[name] = value;
+    }
+    return headers;
+  };
+return customFetch<ReportTemplate>(getUpdateReportTemplateUrl(templateId),
+  {
+    ...options,
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json', ...getHeaders(options?.headers) },
+    body: JSON.stringify(reportTemplateUpdate)
+  }
+);}
+
+
+
+
+
+export const getUpdateReportTemplateMutationKey = () => ['updateReportTemplate'] as const;
+
+export const getUpdateReportTemplateMutationOptions = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof updateReportTemplate>>, TError,UpdateReportTemplateMutationVariables, TContext>, request?: SecondParameter<typeof customFetch>}
+): UseMutationOptions<Awaited<ReturnType<typeof updateReportTemplate>>, TError,UpdateReportTemplateMutationVariables, TContext> => {
+
+const mutationKey = getUpdateReportTemplateMutationKey();
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof updateReportTemplate>>, UpdateReportTemplateMutationVariables> = (props) => {
+          const {templateId,data} = props ?? {};
+
+          return  updateReportTemplate(templateId,data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type UpdateReportTemplateMutationResult = NonNullable<Awaited<ReturnType<typeof updateReportTemplate>>>
+    export type UpdateReportTemplateMutationBody = BodyType<ReportTemplateUpdate>
+    export type UpdateReportTemplateMutationError = ErrorType<unknown>
+    export type UpdateReportTemplateMutationVariables = {templateId: number;data: BodyType<ReportTemplateUpdate>}
+
+    /**
+ * @summary Replace an Excel report template
+ */
+export const useUpdateReportTemplate = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof updateReportTemplate>>, TError,UpdateReportTemplateMutationVariables, TContext>, request?: SecondParameter<typeof customFetch>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof updateReportTemplate>>,
+        TError,
+        UpdateReportTemplateMutationVariables,
+        TContext
+      > => {
+      return useMutation(getUpdateReportTemplateMutationOptions(options), queryClient);
+    }
+
+export const getDeleteReportTemplateUrl = (templateId: number,) => {
+
+
+
+
+  return `/api/report-templates/${templateId}`
+}
+
+/**
+ * @summary Delete an Excel report template
+ */
+export const deleteReportTemplate = async (templateId: number, options?: Parameters<typeof customFetch>[1]): Promise<void> => {
+
+  return customFetch<void>(getDeleteReportTemplateUrl(templateId),
+  {
+    ...options,
+    method: 'DELETE'
+
+
+  }
+);}
+
+
+
+
+
+export const getDeleteReportTemplateMutationKey = () => ['deleteReportTemplate'] as const;
+
+export const getDeleteReportTemplateMutationOptions = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteReportTemplate>>, TError,DeleteReportTemplateMutationVariables, TContext>, request?: SecondParameter<typeof customFetch>}
+): UseMutationOptions<Awaited<ReturnType<typeof deleteReportTemplate>>, TError,DeleteReportTemplateMutationVariables, TContext> => {
+
+const mutationKey = getDeleteReportTemplateMutationKey();
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof deleteReportTemplate>>, DeleteReportTemplateMutationVariables> = (props) => {
+          const {templateId} = props ?? {};
+
+          return  deleteReportTemplate(templateId,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type DeleteReportTemplateMutationResult = NonNullable<Awaited<ReturnType<typeof deleteReportTemplate>>>
+
+    export type DeleteReportTemplateMutationError = ErrorType<unknown>
+    export type DeleteReportTemplateMutationVariables = {templateId: number}
+
+    /**
+ * @summary Delete an Excel report template
+ */
+export const useDeleteReportTemplate = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteReportTemplate>>, TError,DeleteReportTemplateMutationVariables, TContext>, request?: SecondParameter<typeof customFetch>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof deleteReportTemplate>>,
+        TError,
+        DeleteReportTemplateMutationVariables,
+        TContext
+      > => {
+      return useMutation(getDeleteReportTemplateMutationOptions(options), queryClient);
+    }
+
+export const getGenerateReportTemplateUrl = (templateId: number,) => {
+
+
+
+
+  return `/api/report-templates/${templateId}/generate`
+}
+
+/**
+ * @summary Generate an Excel workbook for a month-end date
+ */
+export const generateReportTemplate = async (templateId: number,
+    reportTemplateGenerateInput: ReportTemplateGenerateInput, options?: Parameters<typeof customFetch>[1]): Promise<Blob> => {
+
+    const getHeaders = (h?: NonNullable<RequestInit['headers']>): Record<string, string | readonly string[]> => {
+    if (!h) return {};
+    if (h instanceof Headers) return Object.fromEntries(h.entries());
+    if (Symbol.iterator in h) {
+      return Object.fromEntries(
+        Array.from(h as Iterable<Iterable<string>>, (entry) => Array.from(entry) as [string, string]),
+      );
+    }
+    const headers: Record<string, string | readonly string[]> = {};
+    for (const [name, value] of Object.entries<string | readonly string[] | undefined>(h)) {
+      if (value !== undefined) headers[name] = value;
+    }
+    return headers;
+  };
+return customFetch<Blob>(getGenerateReportTemplateUrl(templateId),
+  {
+    ...options,
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', ...getHeaders(options?.headers) },
+    body: JSON.stringify(reportTemplateGenerateInput)
+  }
+);}
+
+
+
+
+
+export const getGenerateReportTemplateMutationKey = () => ['generateReportTemplate'] as const;
+
+export const getGenerateReportTemplateMutationOptions = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof generateReportTemplate>>, TError,GenerateReportTemplateMutationVariables, TContext>, request?: SecondParameter<typeof customFetch>}
+): UseMutationOptions<Awaited<ReturnType<typeof generateReportTemplate>>, TError,GenerateReportTemplateMutationVariables, TContext> => {
+
+const mutationKey = getGenerateReportTemplateMutationKey();
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof generateReportTemplate>>, GenerateReportTemplateMutationVariables> = (props) => {
+          const {templateId,data} = props ?? {};
+
+          return  generateReportTemplate(templateId,data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type GenerateReportTemplateMutationResult = NonNullable<Awaited<ReturnType<typeof generateReportTemplate>>>
+    export type GenerateReportTemplateMutationBody = BodyType<ReportTemplateGenerateInput>
+    export type GenerateReportTemplateMutationError = ErrorType<unknown>
+    export type GenerateReportTemplateMutationVariables = {templateId: number;data: BodyType<ReportTemplateGenerateInput>}
+
+    /**
+ * @summary Generate an Excel workbook for a month-end date
+ */
+export const useGenerateReportTemplate = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof generateReportTemplate>>, TError,GenerateReportTemplateMutationVariables, TContext>, request?: SecondParameter<typeof customFetch>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof generateReportTemplate>>,
+        TError,
+        GenerateReportTemplateMutationVariables,
+        TContext
+      > => {
+      return useMutation(getGenerateReportTemplateMutationOptions(options), queryClient);
     }
 

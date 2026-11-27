@@ -259,6 +259,129 @@ export interface ReportRunInput {
   asOfDate: string;
 }
 
+export type ReportTemplateFieldField = typeof ReportTemplateFieldField[keyof typeof ReportTemplateFieldField];
+
+
+export const ReportTemplateFieldField = {
+  cusip: 'cusip',
+  issuer: 'issuer',
+  assetClass: 'assetClass',
+  naicDesignationCode: 'naicDesignationCode',
+  coreLevel1Code: 'coreLevel1Code',
+  coreLevel2Code: 'coreLevel2Code',
+  generalLedgerGroup: 'generalLedgerGroup',
+  bvAccrued: 'bvAccrued',
+  mvAccrued: 'mvAccrued',
+} as const;
+
+export interface ReportTemplateField {
+  field: ReportTemplateFieldField;
+  label: string;
+  numeric: boolean;
+}
+
+export interface ReportTemplateStyle {
+  bold: boolean;
+  italic: boolean;
+  /**
+     * @nullable
+     * @pattern ^#[0-9A-Fa-f]{6}$
+     */
+  textColor: string | null;
+  /**
+     * @nullable
+     * @pattern ^#[0-9A-Fa-f]{6}$
+     */
+  backgroundColor: string | null;
+}
+
+export type ReportTemplateColumnField = typeof ReportTemplateColumnField[keyof typeof ReportTemplateColumnField];
+
+
+export const ReportTemplateColumnField = {
+  cusip: 'cusip',
+  issuer: 'issuer',
+  assetClass: 'assetClass',
+  naicDesignationCode: 'naicDesignationCode',
+  coreLevel1Code: 'coreLevel1Code',
+  coreLevel2Code: 'coreLevel2Code',
+  generalLedgerGroup: 'generalLedgerGroup',
+  bvAccrued: 'bvAccrued',
+  mvAccrued: 'mvAccrued',
+} as const;
+
+export type ReportTemplateColumn = ReportTemplateStyle & ({
+  field: ReportTemplateColumnField;
+  /** @minimum 1 */
+  order: number;
+  /** @minLength 1 */
+  headerLabel: string;
+  /** @nullable */
+  secondHeaderLabel: string | null;
+  /**
+     * @nullable
+     * @pattern ^#[0-9A-Fa-f]{6}$
+     */
+  headerBackgroundColor: string | null;
+  aggregate: boolean;
+});
+
+export type ReportTemplateSection = ReportTemplateStyle & ({
+  /** @minLength 1 */
+  name: string;
+  /** @minimum 1 */
+  order: number;
+  twoHeaderRows: boolean;
+  showHoldings: boolean;
+  blankRowAfter: boolean;
+  /** @nullable */
+  aggregationLabel: string | null;
+  /** @minItems 1 */
+  columns: ReportTemplateColumn[];
+});
+
+export interface ReportTemplateSheet {
+  /** @minLength 1 */
+  name: string;
+  /** @minimum 1 */
+  order: number;
+  /** @minItems 1 */
+  sections: ReportTemplateSection[];
+}
+
+export interface ReportTemplate {
+  id: number;
+  name: string;
+  /** @nullable */
+  trustId: number | null;
+  /** @nullable */
+  trustName: string | null;
+  createdAt: string;
+  sheets: ReportTemplateSheet[];
+}
+
+export interface ReportTemplateInput {
+  /** @minLength 1 */
+  name: string;
+  /** @nullable */
+  trustId: number | null;
+  /** @minItems 1 */
+  sheets: ReportTemplateSheet[];
+}
+
+export interface ReportTemplateUpdate {
+  /** @minLength 1 */
+  name: string;
+  /** @nullable */
+  trustId: number | null;
+  /** @minItems 1 */
+  sheets: ReportTemplateSheet[];
+}
+
+export interface ReportTemplateGenerateInput {
+  asOfDate: string;
+}
+
 export type GetRulesParams = {
 trustId?: number;
 };
@@ -273,6 +396,10 @@ asOfDate: string;
 };
 
 export type GetReportsParams = {
+trustId?: number;
+};
+
+export type GetReportTemplatesParams = {
 trustId?: number;
 };
 

@@ -22,3 +22,4 @@ export * from "./trusts";
 export * from "./compliance-rules";
 export * from "./holdings";
 export * from "./compliance-reports";
+export * from "./report-templates";

@@ -23,6 +23,8 @@ import { ErrorBoundary } from '@/components/error-boundary';
 import { Toaster } from '@/components/ui/toaster';
 import { TooltipProvider } from '@/components/ui/tooltip';
 import NotFound from '@/pages/not-found';
+import ReportTemplatesPage from '@/pages/ReportTemplatesPage';
+import ExcelReportsPage from '@/pages/ExcelReportsPage';
 
 ModuleRegistry.registerModules([AllCommunityModule]);
 const queryClient = new QueryClient();
@@ -51,6 +53,8 @@ function Router() {
     <Route path="/trusts" component={TrustsPage} />
     <Route path="/rules" component={RulesPage} />
     <Route path="/holdings" component={HoldingsPage} />
+    <Route path="/excel-templates" component={ReportTemplatesPage} />
+    <Route path="/excel-reports" component={ExcelReportsPage} />
     <Route component={NotFound} />
   </Switch></Shell></RoutedErrorBoundary>;
 }
@@ -65,6 +69,8 @@ function Shell({ children }: { children: ReactNode }) {
     { href: '/trusts', title: 'Trusts & portfolios', icon: Layers3 },
     { href: '/rules', title: 'Compliance rules', icon: ShieldCheck },
     { href: '/holdings', title: 'Holdings & reports', icon: ClipboardCheck },
+    { href: '/excel-templates', title: 'Excel templates', icon: FileText },
+    { href: '/excel-reports', title: 'Excel exports', icon: FileClock },
   ];
   return <div className="app-frame">
     <aside className="sidebar">

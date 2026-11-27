@@ -484,3 +484,322 @@ export const RunReportResponse = zod.object({
 })
 
 
+/**
+ * @summary List holdings fields available in Excel templates
+ */
+export const GetReportTemplateFieldsResponseItem = zod.object({
+  "field": zod.enum(['cusip', 'issuer', 'assetClass', 'naicDesignationCode', 'coreLevel1Code', 'coreLevel2Code', 'generalLedgerGroup', 'bvAccrued', 'mvAccrued']),
+  "label": zod.string(),
+  "numeric": zod.boolean()
+})
+export const GetReportTemplateFieldsResponse = zod.array(GetReportTemplateFieldsResponseItem)
+
+
+/**
+ * @summary List Excel report templates
+ */
+export const GetReportTemplatesQueryParams = zod.object({
+  "trustId": zod.coerce.number().int().optional()
+})
+
+
+
+export const getReportTemplatesResponseSheetsItemSectionsItemOneTextColorRegExp = new RegExp('^#[0-9A-Fa-f]{6}$');
+export const getReportTemplatesResponseSheetsItemSectionsItemOneBackgroundColorRegExp = new RegExp('^#[0-9A-Fa-f]{6}$');
+
+
+export const getReportTemplatesResponseSheetsItemSectionsItemTwoColumnsItemOneTextColorRegExp = new RegExp('^#[0-9A-Fa-f]{6}$');
+export const getReportTemplatesResponseSheetsItemSectionsItemTwoColumnsItemOneBackgroundColorRegExp = new RegExp('^#[0-9A-Fa-f]{6}$');
+
+
+export const getReportTemplatesResponseSheetsItemSectionsItemTwoColumnsItemTwoHeaderBackgroundColorRegExp = new RegExp('^#[0-9A-Fa-f]{6}$');
+
+
+
+
+export const GetReportTemplatesResponseItem = zod.object({
+  "id": zod.int(),
+  "name": zod.string(),
+  "trustId": zod.int().nullable(),
+  "trustName": zod.string().nullable(),
+  "createdAt": zod.coerce.date(),
+  "sheets": zod.array(zod.object({
+  "name": zod.string().min(1),
+  "order": zod.int().min(1),
+  "sections": zod.array(zod.object({
+  "bold": zod.boolean(),
+  "italic": zod.boolean(),
+  "textColor": zod.string().regex(getReportTemplatesResponseSheetsItemSectionsItemOneTextColorRegExp).nullable(),
+  "backgroundColor": zod.string().regex(getReportTemplatesResponseSheetsItemSectionsItemOneBackgroundColorRegExp).nullable()
+}).and(zod.object({
+  "name": zod.string().min(1),
+  "order": zod.int().min(1),
+  "twoHeaderRows": zod.boolean(),
+  "showHoldings": zod.boolean(),
+  "blankRowAfter": zod.boolean(),
+  "aggregationLabel": zod.string().nullable(),
+  "columns": zod.array(zod.object({
+  "bold": zod.boolean(),
+  "italic": zod.boolean(),
+  "textColor": zod.string().regex(getReportTemplatesResponseSheetsItemSectionsItemTwoColumnsItemOneTextColorRegExp).nullable(),
+  "backgroundColor": zod.string().regex(getReportTemplatesResponseSheetsItemSectionsItemTwoColumnsItemOneBackgroundColorRegExp).nullable()
+}).and(zod.object({
+  "field": zod.enum(['cusip', 'issuer', 'assetClass', 'naicDesignationCode', 'coreLevel1Code', 'coreLevel2Code', 'generalLedgerGroup', 'bvAccrued', 'mvAccrued']),
+  "order": zod.int().min(1),
+  "headerLabel": zod.string().min(1),
+  "secondHeaderLabel": zod.string().nullable(),
+  "headerBackgroundColor": zod.string().regex(getReportTemplatesResponseSheetsItemSectionsItemTwoColumnsItemTwoHeaderBackgroundColorRegExp).nullable(),
+  "aggregate": zod.boolean()
+}))).min(1)
+}))).min(1)
+}))
+})
+export const GetReportTemplatesResponse = zod.array(GetReportTemplatesResponseItem)
+
+
+/**
+ * @summary Create an Excel report template
+ */
+
+
+
+export const createReportTemplateBodySheetsItemSectionsItemOneTextColorRegExp = new RegExp('^#[0-9A-Fa-f]{6}$');
+export const createReportTemplateBodySheetsItemSectionsItemOneBackgroundColorRegExp = new RegExp('^#[0-9A-Fa-f]{6}$');
+
+
+export const createReportTemplateBodySheetsItemSectionsItemTwoColumnsItemOneTextColorRegExp = new RegExp('^#[0-9A-Fa-f]{6}$');
+export const createReportTemplateBodySheetsItemSectionsItemTwoColumnsItemOneBackgroundColorRegExp = new RegExp('^#[0-9A-Fa-f]{6}$');
+
+
+export const createReportTemplateBodySheetsItemSectionsItemTwoColumnsItemTwoHeaderBackgroundColorRegExp = new RegExp('^#[0-9A-Fa-f]{6}$');
+
+
+
+
+
+export const CreateReportTemplateBody = zod.object({
+  "name": zod.string().min(1),
+  "trustId": zod.int().nullable(),
+  "sheets": zod.array(zod.object({
+  "name": zod.string().min(1),
+  "order": zod.int().min(1),
+  "sections": zod.array(zod.object({
+  "bold": zod.boolean(),
+  "italic": zod.boolean(),
+  "textColor": zod.string().regex(createReportTemplateBodySheetsItemSectionsItemOneTextColorRegExp).nullable(),
+  "backgroundColor": zod.string().regex(createReportTemplateBodySheetsItemSectionsItemOneBackgroundColorRegExp).nullable()
+}).and(zod.object({
+  "name": zod.string().min(1),
+  "order": zod.int().min(1),
+  "twoHeaderRows": zod.boolean(),
+  "showHoldings": zod.boolean(),
+  "blankRowAfter": zod.boolean(),
+  "aggregationLabel": zod.string().nullable(),
+  "columns": zod.array(zod.object({
+  "bold": zod.boolean(),
+  "italic": zod.boolean(),
+  "textColor": zod.string().regex(createReportTemplateBodySheetsItemSectionsItemTwoColumnsItemOneTextColorRegExp).nullable(),
+  "backgroundColor": zod.string().regex(createReportTemplateBodySheetsItemSectionsItemTwoColumnsItemOneBackgroundColorRegExp).nullable()
+}).and(zod.object({
+  "field": zod.enum(['cusip', 'issuer', 'assetClass', 'naicDesignationCode', 'coreLevel1Code', 'coreLevel2Code', 'generalLedgerGroup', 'bvAccrued', 'mvAccrued']),
+  "order": zod.int().min(1),
+  "headerLabel": zod.string().min(1),
+  "secondHeaderLabel": zod.string().nullable(),
+  "headerBackgroundColor": zod.string().regex(createReportTemplateBodySheetsItemSectionsItemTwoColumnsItemTwoHeaderBackgroundColorRegExp).nullable(),
+  "aggregate": zod.boolean()
+}))).min(1)
+}))).min(1)
+})).min(1)
+})
+
+
+
+export const createReportTemplateResponseSheetsItemSectionsItemOneTextColorRegExp = new RegExp('^#[0-9A-Fa-f]{6}$');
+export const createReportTemplateResponseSheetsItemSectionsItemOneBackgroundColorRegExp = new RegExp('^#[0-9A-Fa-f]{6}$');
+
+
+export const createReportTemplateResponseSheetsItemSectionsItemTwoColumnsItemOneTextColorRegExp = new RegExp('^#[0-9A-Fa-f]{6}$');
+export const createReportTemplateResponseSheetsItemSectionsItemTwoColumnsItemOneBackgroundColorRegExp = new RegExp('^#[0-9A-Fa-f]{6}$');
+
+
+export const createReportTemplateResponseSheetsItemSectionsItemTwoColumnsItemTwoHeaderBackgroundColorRegExp = new RegExp('^#[0-9A-Fa-f]{6}$');
+
+
+
+
+export const CreateReportTemplateResponse = zod.object({
+  "id": zod.int(),
+  "name": zod.string(),
+  "trustId": zod.int().nullable(),
+  "trustName": zod.string().nullable(),
+  "createdAt": zod.coerce.date(),
+  "sheets": zod.array(zod.object({
+  "name": zod.string().min(1),
+  "order": zod.int().min(1),
+  "sections": zod.array(zod.object({
+  "bold": zod.boolean(),
+  "italic": zod.boolean(),
+  "textColor": zod.string().regex(createReportTemplateResponseSheetsItemSectionsItemOneTextColorRegExp).nullable(),
+  "backgroundColor": zod.string().regex(createReportTemplateResponseSheetsItemSectionsItemOneBackgroundColorRegExp).nullable()
+}).and(zod.object({
+  "name": zod.string().min(1),
+  "order": zod.int().min(1),
+  "twoHeaderRows": zod.boolean(),
+  "showHoldings": zod.boolean(),
+  "blankRowAfter": zod.boolean(),
+  "aggregationLabel": zod.string().nullable(),
+  "columns": zod.array(zod.object({
+  "bold": zod.boolean(),
+  "italic": zod.boolean(),
+  "textColor": zod.string().regex(createReportTemplateResponseSheetsItemSectionsItemTwoColumnsItemOneTextColorRegExp).nullable(),
+  "backgroundColor": zod.string().regex(createReportTemplateResponseSheetsItemSectionsItemTwoColumnsItemOneBackgroundColorRegExp).nullable()
+}).and(zod.object({
+  "field": zod.enum(['cusip', 'issuer', 'assetClass', 'naicDesignationCode', 'coreLevel1Code', 'coreLevel2Code', 'generalLedgerGroup', 'bvAccrued', 'mvAccrued']),
+  "order": zod.int().min(1),
+  "headerLabel": zod.string().min(1),
+  "secondHeaderLabel": zod.string().nullable(),
+  "headerBackgroundColor": zod.string().regex(createReportTemplateResponseSheetsItemSectionsItemTwoColumnsItemTwoHeaderBackgroundColorRegExp).nullable(),
+  "aggregate": zod.boolean()
+}))).min(1)
+}))).min(1)
+}))
+})
+
+
+/**
+ * @summary Replace an Excel report template
+ */
+export const UpdateReportTemplateParams = zod.object({
+  "templateId": zod.coerce.number().int()
+})
+
+
+
+
+export const updateReportTemplateBodySheetsItemSectionsItemOneTextColorRegExp = new RegExp('^#[0-9A-Fa-f]{6}$');
+export const updateReportTemplateBodySheetsItemSectionsItemOneBackgroundColorRegExp = new RegExp('^#[0-9A-Fa-f]{6}$');
+
+
+export const updateReportTemplateBodySheetsItemSectionsItemTwoColumnsItemOneTextColorRegExp = new RegExp('^#[0-9A-Fa-f]{6}$');
+export const updateReportTemplateBodySheetsItemSectionsItemTwoColumnsItemOneBackgroundColorRegExp = new RegExp('^#[0-9A-Fa-f]{6}$');
+
+
+export const updateReportTemplateBodySheetsItemSectionsItemTwoColumnsItemTwoHeaderBackgroundColorRegExp = new RegExp('^#[0-9A-Fa-f]{6}$');
+
+
+
+
+
+export const UpdateReportTemplateBody = zod.object({
+  "name": zod.string().min(1),
+  "trustId": zod.int().nullable(),
+  "sheets": zod.array(zod.object({
+  "name": zod.string().min(1),
+  "order": zod.int().min(1),
+  "sections": zod.array(zod.object({
+  "bold": zod.boolean(),
+  "italic": zod.boolean(),
+  "textColor": zod.string().regex(updateReportTemplateBodySheetsItemSectionsItemOneTextColorRegExp).nullable(),
+  "backgroundColor": zod.string().regex(updateReportTemplateBodySheetsItemSectionsItemOneBackgroundColorRegExp).nullable()
+}).and(zod.object({
+  "name": zod.string().min(1),
+  "order": zod.int().min(1),
+  "twoHeaderRows": zod.boolean(),
+  "showHoldings": zod.boolean(),
+  "blankRowAfter": zod.boolean(),
+  "aggregationLabel": zod.string().nullable(),
+  "columns": zod.array(zod.object({
+  "bold": zod.boolean(),
+  "italic": zod.boolean(),
+  "textColor": zod.string().regex(updateReportTemplateBodySheetsItemSectionsItemTwoColumnsItemOneTextColorRegExp).nullable(),
+  "backgroundColor": zod.string().regex(updateReportTemplateBodySheetsItemSectionsItemTwoColumnsItemOneBackgroundColorRegExp).nullable()
+}).and(zod.object({
+  "field": zod.enum(['cusip', 'issuer', 'assetClass', 'naicDesignationCode', 'coreLevel1Code', 'coreLevel2Code', 'generalLedgerGroup', 'bvAccrued', 'mvAccrued']),
+  "order": zod.int().min(1),
+  "headerLabel": zod.string().min(1),
+  "secondHeaderLabel": zod.string().nullable(),
+  "headerBackgroundColor": zod.string().regex(updateReportTemplateBodySheetsItemSectionsItemTwoColumnsItemTwoHeaderBackgroundColorRegExp).nullable(),
+  "aggregate": zod.boolean()
+}))).min(1)
+}))).min(1)
+})).min(1)
+})
+
+
+
+export const updateReportTemplateResponseSheetsItemSectionsItemOneTextColorRegExp = new RegExp('^#[0-9A-Fa-f]{6}$');
+export const updateReportTemplateResponseSheetsItemSectionsItemOneBackgroundColorRegExp = new RegExp('^#[0-9A-Fa-f]{6}$');
+
+
+export const updateReportTemplateResponseSheetsItemSectionsItemTwoColumnsItemOneTextColorRegExp = new RegExp('^#[0-9A-Fa-f]{6}$');
+export const updateReportTemplateResponseSheetsItemSectionsItemTwoColumnsItemOneBackgroundColorRegExp = new RegExp('^#[0-9A-Fa-f]{6}$');
+
+
+export const updateReportTemplateResponseSheetsItemSectionsItemTwoColumnsItemTwoHeaderBackgroundColorRegExp = new RegExp('^#[0-9A-Fa-f]{6}$');
+
+
+
+
+export const UpdateReportTemplateResponse = zod.object({
+  "id": zod.int(),
+  "name": zod.string(),
+  "trustId": zod.int().nullable(),
+  "trustName": zod.string().nullable(),
+  "createdAt": zod.coerce.date(),
+  "sheets": zod.array(zod.object({
+  "name": zod.string().min(1),
+  "order": zod.int().min(1),
+  "sections": zod.array(zod.object({
+  "bold": zod.boolean(),
+  "italic": zod.boolean(),
+  "textColor": zod.string().regex(updateReportTemplateResponseSheetsItemSectionsItemOneTextColorRegExp).nullable(),
+  "backgroundColor": zod.string().regex(updateReportTemplateResponseSheetsItemSectionsItemOneBackgroundColorRegExp).nullable()
+}).and(zod.object({
+  "name": zod.string().min(1),
+  "order": zod.int().min(1),
+  "twoHeaderRows": zod.boolean(),
+  "showHoldings": zod.boolean(),
+  "blankRowAfter": zod.boolean(),
+  "aggregationLabel": zod.string().nullable(),
+  "columns": zod.array(zod.object({
+  "bold": zod.boolean(),
+  "italic": zod.boolean(),
+  "textColor": zod.string().regex(updateReportTemplateResponseSheetsItemSectionsItemTwoColumnsItemOneTextColorRegExp).nullable(),
+  "backgroundColor": zod.string().regex(updateReportTemplateResponseSheetsItemSectionsItemTwoColumnsItemOneBackgroundColorRegExp).nullable()
+}).and(zod.object({
+  "field": zod.enum(['cusip', 'issuer', 'assetClass', 'naicDesignationCode', 'coreLevel1Code', 'coreLevel2Code', 'generalLedgerGroup', 'bvAccrued', 'mvAccrued']),
+  "order": zod.int().min(1),
+  "headerLabel": zod.string().min(1),
+  "secondHeaderLabel": zod.string().nullable(),
+  "headerBackgroundColor": zod.string().regex(updateReportTemplateResponseSheetsItemSectionsItemTwoColumnsItemTwoHeaderBackgroundColorRegExp).nullable(),
+  "aggregate": zod.boolean()
+}))).min(1)
+}))).min(1)
+}))
+})
+
+
+/**
+ * @summary Delete an Excel report template
+ */
+export const DeleteReportTemplateParams = zod.object({
+  "templateId": zod.coerce.number().int()
+})
+
+export const DeleteReportTemplateResponse = zod.void()
+
+
+/**
+ * @summary Generate an Excel workbook for a month-end date
+ */
+export const GenerateReportTemplateParams = zod.object({
+  "templateId": zod.coerce.number().int()
+})
+
+export const GenerateReportTemplateBody = zod.object({
+  "asOfDate": zod.coerce.date()
+})
+
+export const GenerateReportTemplateResponse = zod.unknown()
+
+
